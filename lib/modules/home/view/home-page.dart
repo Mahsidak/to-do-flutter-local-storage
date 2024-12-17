@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:to_do/modules/home/view/widgets/add-task-sheet.dart';
-import 'package:to_do/modules/home/view/widgets/task-list-widget.dart';
+import 'package:to_do/modules/home/view/widgets/task-card-widget.dart';
+import '../model/task-item.dart';
 import '../viewModel/view-model.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,7 +18,6 @@ class _HomePageState extends State<HomePage> {
     taskViewModel.fetchTasks();
   }
 
-  // Show a confirmation dialog before deleting all tasks
   void _showDeleteConfirmationDialog() {
     showDialog(
       context: context,
@@ -53,12 +53,41 @@ class _HomePageState extends State<HomePage> {
         actions: [
           IconButton(
             icon: Icon(Icons.delete_forever),
-            onPressed: _showDeleteConfirmationDialog, // Show confirmation dialog
+            onPressed: _showDeleteConfirmationDialog,
             tooltip: 'Delete All Tasks',
           ),
         ],
       ),
-      body: taskListWidget(taskViewModel),
+      body: ValueListenableBuilder<List<TaskItem>>(
+        valueListenable: taskViewModel.tasksNotifier,
+        builder: (context, tasks, _) {
+          return ListView.builder(
+            itemCount: tasks.length,
+            itemBuilder: (context, index) {
+              final task = tasks[index];
+              return Dismissible(
+                key: Key(task.id),
+                direction: DismissDirection.endToStart,
+                onDismissed: (direction) async {
+                  await taskViewModel.deleteTask(task.id);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Task deleted')),
+                  );
+                },
+                background: Container(
+                  color: Colors.red,
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Icon(Icons.delete, color: Colors.white),
+                  ),
+                ),
+                child: taskCardWidget(context, task),
+              );
+            },
+          );
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(

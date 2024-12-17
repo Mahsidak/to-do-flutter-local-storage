@@ -21,7 +21,7 @@ Widget taskListWidget(TaskViewModel taskViewModel) {
       return ListView.builder(
         itemCount: tasks.length,
         itemBuilder: (context, index) {
-          return taskCardWidget(tasks[index]);
+          return taskCardWidget(context, tasks[index]);
         },
       );
     },

@@ -15,6 +15,20 @@ class TaskViewModel {
     }
   }
 
+  Future<void> deleteTask(String taskId) async {
+    try {
+      final success = await LocalDataSource().deleteTask(taskId);
+      if (success) {
+        await fetchTasks();  // Refresh the tasks list after deleting a task
+        print('Task with ID $taskId deleted');
+      } else {
+        print('Failed to delete task with ID $taskId');
+      }
+    } catch (e) {
+      print('Error deleting task with ID $taskId: $e');
+    }
+  }
+
   Future<void> deleteAllTasks() async {
     try {
       await LocalDataSource().deleteAllTasks();
