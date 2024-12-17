@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+
 import '../../../local/local_data_source.dart';
 import '../model/task-item.dart';
 
@@ -11,6 +12,16 @@ class TaskViewModel {
       tasksNotifier.value = fetchedTasks;
     } catch (e) {
       print('Error fetching tasks: $e');
+    }
+  }
+
+  Future<void> deleteAllTasks() async {
+    try {
+      await LocalDataSource().deleteAllTasks();
+      await fetchTasks();
+      print('All tasks have been deleted');
+    } catch (e) {
+      print('Error deleting all tasks: $e');
     }
   }
 }

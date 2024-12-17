@@ -27,7 +27,6 @@ class LocalDataSource {
             id TEXT PRIMARY KEY,
             title TEXT NOT NULL,
             description TEXT,
-            status INTEGER NOT NULL,
             dueDate INTEGER,
             priority INTEGER NOT NULL
           )

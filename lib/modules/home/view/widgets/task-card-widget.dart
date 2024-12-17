@@ -12,15 +12,9 @@ Widget taskCardWidget(TaskItem task) {
       backgroundColor = Colors.red[200]!;
       break;
     case 2:
-      backgroundColor = Colors.orange[200]!;
-      break;
-    case 3:
-      backgroundColor = Colors.yellow[100]!;
-      break;
-    case 4:
       backgroundColor = Colors.green[200]!;
       break;
-    case 5:
+    case 3:
       backgroundColor = Colors.blue[200]!;
       break;
     default:

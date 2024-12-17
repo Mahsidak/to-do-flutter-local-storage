@@ -2,7 +2,6 @@ class TaskItem {
   final String id;
   final String title;
   final String description;
-  final int status;
   final int? dueDate;
   final int priority;
 
@@ -10,7 +9,6 @@ class TaskItem {
     required this.id,
     required this.title,
     required this.description,
-    required this.status,
     this.dueDate,
     required this.priority,
   });
@@ -20,7 +18,6 @@ class TaskItem {
       'id': id,
       'title': title,
       'description': description,
-      'status': status,
       'dueDate': dueDate,
       'priority': priority,
     };
@@ -31,7 +28,6 @@ class TaskItem {
       id: map['id'],
       title: map['title'],
       description: map['description'],
-      status: map['status'],
       dueDate: map['dueDate'],
       priority: map['priority'],
     );

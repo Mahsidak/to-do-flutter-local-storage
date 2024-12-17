@@ -15,9 +15,23 @@ class AddTaskSheet extends StatefulWidget {
 class _AddTaskSheetState extends State<AddTaskSheet> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _statusController = TextEditingController(text: '0');
-  final TextEditingController _dueDateController = TextEditingController();
+  DateTime? _dueDate;
   int _selectedPriority = 3;
+
+  // Function to show the date picker
+  Future<void> _selectDueDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _dueDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != _dueDate) {
+      setState(() {
+        _dueDate = picked;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,24 +74,20 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
               ),
             ),
             SizedBox(height: 12),
-            TextField(
-              controller: _statusController,
-              decoration: InputDecoration(
-                labelText: 'Status (0: Pending, 1: Completed)',
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            GestureDetector(
+              onTap: () => _selectDueDate(context),  // Open the date picker
+              child: AbsorbPointer(
+                child: TextField(
+                  controller: TextEditingController(
+                    text: _dueDate != null ? _dueDate!.toLocal().toString().split(' ')[0] : '',
+                  ),
+                  decoration: InputDecoration(
+                    labelText: 'Due Date',
+                    border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  ),
+                ),
               ),
-              keyboardType: TextInputType.number,
-            ),
-            SizedBox(height: 12),
-            TextField(
-              controller: _dueDateController,
-              decoration: InputDecoration(
-                labelText: 'Due Date (timestamp)',
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              ),
-              keyboardType: TextInputType.number,
             ),
             SizedBox(height: 12),
             DropdownButtonFormField<int>(
@@ -88,11 +98,9 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                 contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               ),
               items: [
-                DropdownMenuItem(value: 1, child: Text('P1 (Critical)')),
-                DropdownMenuItem(value: 2, child: Text('P2 (High)')),
-                DropdownMenuItem(value: 3, child: Text('P3 (Medium)')),
-                DropdownMenuItem(value: 4, child: Text('P4 (Low)')),
-                DropdownMenuItem(value: 5, child: Text('P5 (Lowest)')),
+                DropdownMenuItem(value: 1, child: Text('High')),
+                DropdownMenuItem(value: 2, child: Text('Medium')),
+                DropdownMenuItem(value: 3, child: Text('Low')),
               ],
               onChanged: (value) {
                 if (value != null) {
@@ -119,10 +127,7 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                     title: title,
                     description: _descriptionController.text.trim(),
                     priority: _selectedPriority,
-                    status: int.parse(_statusController.text.trim()),
-                    dueDate: _dueDateController.text.isNotEmpty
-                        ? int.tryParse(_dueDateController.text.trim())
-                        : null,
+                    dueDate: _dueDate?.millisecondsSinceEpoch,
                   );
 
                   await LocalDataSource().createTask(task);

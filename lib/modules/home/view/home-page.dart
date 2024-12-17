@@ -17,11 +17,46 @@ class _HomePageState extends State<HomePage> {
     taskViewModel.fetchTasks();
   }
 
+  // Show a confirmation dialog before deleting all tasks
+  void _showDeleteConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete All Tasks'),
+          content: Text('Are you sure you want to delete all tasks? This action cannot be undone.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await taskViewModel.deleteAllTasks();
+              },
+              child: Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('To-Do App'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete_forever),
+            onPressed: _showDeleteConfirmationDialog, // Show confirmation dialog
+            tooltip: 'Delete All Tasks',
+          ),
+        ],
       ),
       body: taskListWidget(taskViewModel),
       floatingActionButton: FloatingActionButton(
